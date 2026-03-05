@@ -1,0 +1,198 @@
+# ============================================
+# Real-Time Fraud Detection - Docker Compose
+# ============================================
+# Tüm servisleri tek komutla başlatır: docker compose up -d
+#
+# Servisler:
+#   - Zookeeper + Kafka  → Mesaj altyapısı
+#   - Spark Master/Worker → Stream processing
+#   - PostgreSQL + MinIO  → MLflow backend & artifact store
+#   - MLflow              → Experiment tracking & model registry
+
+services:
+
+  # ===========================================
+  # KAFKA ECOSYSTEM
+  # ===========================================
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=ruok,srvr"
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: echo srvr | nc localhost 2181 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # İki listener tanımlıyoruz:
+      #   PLAINTEXT  → container'lar arası iletişim (kafka:29092)
+      #   HOST       → host makineden erişim (localhost:9092)
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,HOST://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    healthcheck:
+      test: kafka-broker-api-versions --bootstrap-server localhost:9092
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # Topic'leri otomatik oluşturan init container
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka-init
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command: |
+      "
+      echo 'Kafka topic olusturuluyor...'
+      kafka-topics --create --if-not-exists --topic transactions    --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=604800000
+      kafka-topics --create --if-not-exists --topic fraud-alerts    --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=2592000000
+      kafka-topics --create --if-not-exists --topic features        --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=604800000
+      echo 'Topic listesi:'
+      kafka-topics --list --bootstrap-server kafka:29092
+      echo 'Kafka init tamamlandi.'
+      "
+
+  # ===========================================
+  # SPARK
+  # ===========================================
+
+  spark-master:
+    image: apache/spark:3.5.4
+    container_name: spark-master
+    command: /opt/spark/sbin/start-master.sh
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_NO_DAEMONIZE=true
+    ports:
+      - "8080:8080"   # Spark Master Web UI
+      - "7077:7077"   # Spark Master port
+    volumes:
+      - ./src:/opt/spark-app/src
+      - ./data:/opt/spark-app/data
+
+  spark-worker:
+    image: apache/spark:3.5.4
+    container_name: spark-worker
+    command: /opt/spark/sbin/start-worker.sh spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_NO_DAEMONIZE=true
+    volumes:
+      - ./src:/opt/spark-app/src
+      - ./data:/opt/spark-app/data
+
+  # ===========================================
+  # MLFLOW BACKEND (PostgreSQL + MinIO)
+  # ===========================================
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mlflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mlflow123}
+      POSTGRES_DB: ${POSTGRES_DB:-mlflow}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U mlflow
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: mc ready local
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO bucket'ı otomatik oluştur
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      "
+      mc alias set myminio http://minio:9000 minioadmin minioadmin
+      mc mb --ignore-existing myminio/mlflow-artifacts
+      echo 'MinIO bucket olusturuldu: mlflow-artifacts'
+      "
+
+  # ===========================================
+  # MLFLOW TRACKING SERVER
+  # ===========================================
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.mlflow
+    container_name: mlflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    ports:
+      - "5001:5000"
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-minioadmin}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-minioadmin}
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri postgresql://${POSTGRES_USER:-mlflow}:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/${POSTGRES_DB:-mlflow}
+      --default-artifact-root s3://mlflow-artifacts/
+    healthcheck:
+      test: curl -f http://localhost:5000/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  minio_data:

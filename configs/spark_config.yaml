@@ -1,0 +1,23 @@
+# Spark Structured Streaming Configuration
+
+spark:
+  app_name: "FraudDetectionStreaming"
+  master: "spark://spark-master:7077"
+
+  # Kafka bağlantısı
+  kafka:
+    bootstrap_servers: "kafka:29092"
+    subscribe: "transactions"
+    starting_offsets: "latest"
+
+  # Streaming ayarları
+  streaming:
+    trigger_processing_time: "10 seconds"   # Her 10 saniyede micro-batch
+    watermark_delay: "10 minutes"           # 10 dk geç gelen veri tolere edilir
+    checkpoint_location: "/opt/spark-app/data/checkpoints"
+
+  # Output
+  output:
+    features_topic: "features"
+    fraud_alerts_topic: "fraud-alerts"
+    parquet_path: "/opt/spark-app/data/features/"

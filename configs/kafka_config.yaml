@@ -1,0 +1,21 @@
+# Kafka Topic Configuration
+# Bu dosya referans amaçlıdır, topic'ler docker-compose kafka-init ile oluşturulur.
+
+topics:
+  transactions:
+    partitions: 3
+    replication_factor: 1
+    retention_ms: 604800000    # 7 gün
+    description: "Ham transaction verileri (producer → consumer)"
+
+  fraud-alerts:
+    partitions: 3
+    replication_factor: 1
+    retention_ms: 2592000000   # 30 gün
+    description: "Tespit edilen sahtecilik alertleri"
+
+  features:
+    partitions: 3
+    replication_factor: 1
+    retention_ms: 604800000    # 7 gün
+    description: "Hesaplanmış feature'lar (Spark → Feature Store)"
