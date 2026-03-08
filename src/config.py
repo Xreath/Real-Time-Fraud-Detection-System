@@ -14,6 +14,10 @@ KAFKA_BROKER = os.getenv("KAFKA_BROKER", "localhost:9092")
 KAFKA_TOPIC_TRANSACTIONS = os.getenv("KAFKA_TOPIC_TRANSACTIONS", "transactions")
 KAFKA_TOPIC_FRAUD_ALERTS = os.getenv("KAFKA_TOPIC_FRAUD_ALERTS", "fraud-alerts")
 KAFKA_TOPIC_FEATURES = os.getenv("KAFKA_TOPIC_FEATURES", "features")
+KAFKA_TOPIC_DLQ = os.getenv("KAFKA_TOPIC_DLQ", "transactions-dlq")  # Dead Letter Queue: parse edilemeyen mesajlar
+
+# --- Schema Registry ---
+SCHEMA_REGISTRY_URL = os.getenv("SCHEMA_REGISTRY_URL", "http://localhost:8085")
 
 # --- Spark ---
 SPARK_MASTER_URL = os.getenv("SPARK_MASTER_URL", "spark://spark-master:7077")

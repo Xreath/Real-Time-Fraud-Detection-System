@@ -13,7 +13,7 @@
 - Tüm bileşenler Python ile yazılacak
 
 ### Paket Yönetimi
-- **pip + venv** (virtual environment)
+- **uv + .venv** (virtual environment) — pip'ten ~10x hızlı
 - `requirements.txt` ile dependency management
 
 ---

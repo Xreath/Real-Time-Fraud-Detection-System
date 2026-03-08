@@ -56,6 +56,28 @@ services:
       timeout: 10s
       retries: 5
 
+  # Confluent Schema Registry - JSON Schema doğrulama
+  # Neden? → Mesaj formatının tutarlı olmasını garanti eder.
+  # Producer schema'ya uymayan mesaj gönderirse hata alır.
+  # Mülakat: "Schema evolution nasıl yönetiyorsunuz?" → Schema Registry + compatibility mode
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.6.0
+    container_name: schema-registry
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8085:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:29092
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    healthcheck:
+      test: curl -f http://localhost:8081/ || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Topic'leri otomatik oluşturan init container
   kafka-init:
     image: confluentinc/cp-kafka:7.6.0
@@ -67,9 +89,10 @@ services:
     command: |
       "
       echo 'Kafka topic olusturuluyor...'
-      kafka-topics --create --if-not-exists --topic transactions    --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=604800000
-      kafka-topics --create --if-not-exists --topic fraud-alerts    --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=2592000000
-      kafka-topics --create --if-not-exists --topic features        --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=604800000
+      kafka-topics --create --if-not-exists --topic transactions        --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=604800000
+      kafka-topics --create --if-not-exists --topic fraud-alerts        --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=2592000000
+      kafka-topics --create --if-not-exists --topic features             --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --config retention.ms=604800000
+      kafka-topics --create --if-not-exists --topic transactions-dlq     --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --config retention.ms=604800000
       echo 'Topic listesi:'
       kafka-topics --list --bootstrap-server kafka:29092
       echo 'Kafka init tamamlandi.'

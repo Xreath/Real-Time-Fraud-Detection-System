@@ -5,7 +5,8 @@
 # Kullanım: make <komut>
 
 .PHONY: help up down restart logs status kafka-topics \
-        venv install producer spark-submit mlflow-ui clean
+        venv install producer spark-submit mlflow-ui clean \
+        register-schemas prepare-data train stream
 
 # Varsayılan: help
 help:
@@ -68,20 +69,32 @@ kafka-topics:
 
 # --- Python ---
 venv:
-	python3 -m venv venv
+	uv venv .venv
 	@echo "✅ Virtual environment oluşturuldu."
-	@echo "   Aktifleştirmek için: source venv/bin/activate"
+	@echo "   Aktifleştirmek için: source .venv/bin/activate"
 
 install: venv
-	. venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
+	uv pip install -r requirements.txt
 	@echo "✅ Bağımlılıklar kuruldu."
 
 # --- Application ---
 producer:
-	. venv/bin/activate && python -m src.data_generator.kafka_producer
+	. .venv/bin/activate && python -m src.data_generator.kafka_producer
 
 consumer-debug:
-	. venv/bin/activate && python -m src.data_generator.kafka_consumer_debug --from-beginning --max-messages 50
+	. .venv/bin/activate && python -m src.data_generator.kafka_consumer_debug --from-beginning --max-messages 50
+
+register-schemas:
+	. .venv/bin/activate && python -m src.data_generator.register_schemas
+
+stream:
+	. .venv/bin/activate && python -m src.streaming.spark_consumer --debug
+
+prepare-data:
+	. .venv/bin/activate && python -m src.training.prepare_data
+
+train:
+	. .venv/bin/activate && python -m src.training.train_model
 
 # --- Cleanup ---
 clean:

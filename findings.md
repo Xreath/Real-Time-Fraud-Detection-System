@@ -43,6 +43,33 @@
 - "Neden fraud?" sorusuna cevap verebilmek için SHAP kritik
   - Örnek: "Son 1 saatte 15 işlem (velocity) + konum 2000km uzakta (impossible travel)"
 
+### Zookeeper vs KRaft
+- Bu projede Zookeeper kullanılıyor (Confluent 7.6.0)
+- Kafka 3.0+ ile KRaft modu: Zookeeper'sız, Kafka kendi metadata'sını yönetiyor
+- KRaft avantajları: 1 container az, daha hızlı startup, daha az kaynak
+- Neden Zookeeper'da kaldık: Confluent Stack ile uyumluluk, öğrenme sürecinde tanıdık setup
+- Mülakat cevabı: "KRaft'ın farkındayım, prod'da KRaft tercih edilir. Bu setup'ta Confluent ecosystem uyumluluğu öncelikli."
+
+### Parquet vs Delta Lake
+- Seçim: **Düz Parquet** (Delta Lake yok)
+- Parquet: columnar storage, hızlı okuma, basit. Transaction/schema evolution yok.
+- Delta Lake: Parquet üzerine ACID, time-travel, schema enforcement ekler. Spark + Delta connector gerektirir.
+- Bu proje için Parquet yeterli: batch training, append-only writes, schema sabit
+- Mülakat cevabı: "Production'da Delta Lake düşünürdük özellikle feature backfill ve time-travel için. Bu scope için Parquet yeterli."
+
+### Feature Store Kararı
+- **Seçim: Parquet tabanlı basit feature store** (Feast yok)
+- Neden Feast değil? → Fazladan infra (Redis/online store, feature registry), bu projenin scope'unu aşıyor
+- Parquet yeterli çünkü: batch training için offline store yeterli, online serving Spark'tan yapılıyor
+- Mülakat cevabı: "Production'da Feast düşünürdük, ama bu projede complexity-value tradeoff'u Parquet lehine"
+
+### Rollback Mekanizması
+- MLflow her model versiyonunu saklar → önceki "Production" stage'deki model her zaman erişilebilir
+- Strateji: Canary deploy (%10 trafik) → 1 saat izle → iyi ise %100, kötü ise rollback
+- Vertex AI'da traffic splitting native destekleniyor (`--traffic-split`)
+- Rollback komutu: `mlflow models set-model-version-tag` + Vertex AI endpoint update
+- Mülakat cevabı: "MLflow'da version history tutuyoruz, Vertex AI'da traffic split ile canary deploy sonrası otomatik rollback yapıyoruz"
+
 ### Retraining Strategy (Faz 7) - HYBRID
 - **Scheduled**: Her Pazar gecesi 02:00'de otomatik retrain
   - Haftalık biriken yeni verilerle model güncellenir

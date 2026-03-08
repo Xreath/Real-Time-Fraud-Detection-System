@@ -27,7 +27,7 @@ Bu proje bir **öğrenme/portfolio projesidir**. Amaçlar:
 
 ### Task 1.1: Project Structure & Dependencies
 - [x] Create project directory structure
-- [x] Setup Python virtual environment
+- [x] Setup Python virtual environment (uv + .venv)
 - [x] Create requirements.txt / pyproject.toml
 - [x] Create Docker Compose for Kafka, Zookeeper, Spark, MLflow
 - [x] Create .env file for configuration
@@ -42,6 +42,10 @@ Bu proje bir **öğrenme/portfolio projesidir**. Amaçlar:
 - [x] docker-compose.yml with all services
 - [x] kafka-init container (topic otomatik oluşturma)
 - [x] minio-init container (bucket otomatik oluşturma)
+
+> **Bilinen Trade-off'lar (Bilinçli Kararlar):**
+> - **Zookeeper**: Kafka 3.0+ KRaft modu ile Zookeeper'a gerek yok. Bu projede Confluent 7.6.0 + Zookeeper kullanılıyor çünkü Confluent'ın managed platform'u hâlâ Zookeeper ile daha stabil. KRaft'a geçiş yapılabilir ama mülakatta "farkındayım, KRaft daha modern" demek yeterli.
+> - **MinIO vs GCS**: Training local (MinIO), deployment cloud (GCS/Vertex AI). İki farklı ortam, bilinçli ayrım. Production'da her şey GCS'e taşınır.
 
 ---
 
@@ -76,7 +80,7 @@ Bu proje bir **öğrenme/portfolio projesidir**. Amaçlar:
 - [x] Create "fraud-alerts" topic (for detected frauds)
 - [x] Create "features" topic (for computed features)
 - [x] Configure retention, replication, partitions
-- [ ] Schema Registry setup (optional - Avro schemas) → skipped (JSON kullanıyoruz)
+- [x] Schema Registry setup (JSON Schema) → container healthy, transactions-value schema id=1 kayıtlı, BACKWARD compatibility
 
 ### Task 3.2: Kafka Consumer Verification
 - [x] Simple consumer script for debugging (kafka_consumer_debug.py)
@@ -86,68 +90,76 @@ Bu proje bir **öğrenme/portfolio projesidir**. Amaçlar:
 ---
 
 ## Phase 4: Spark Streaming & Feature Engineering
-**Status:** pending
+**Status:** complete
 
 ### Task 4.1: Spark Structured Streaming Setup
-- [ ] Configure Spark to read from Kafka
-- [ ] Parse JSON/Avro messages
-- [ ] Watermarking for late data handling
+- [x] Configure Spark to read from Kafka (spark_consumer.py)
+- [x] Parse JSON messages (TRANSACTION_SCHEMA)
+- [x] Watermarking for late data handling (10 minutes)
+- [x] **Error Handling & Recovery**:
+  - Checkpoint location → `/data/checkpoints/` (Spark state recovery)
+  - [x] DLQ: parse edilemeyen mesajlar → `transactions-dlq` topic'ine yazılır
+  - [x] Model inference hatasında fallback: score = -1 (manual_review)
+  - Job crash sonrası otomatik restart → Phase 7 (Airflow sensor) ile
 
 ### Task 4.2: Feature Engineering Pipeline
-- [ ] **Windowed Features (1-hour window):**
+- [x] **Windowed Features (1-hour window):**
   - Transaction count per user (last 1h)
   - Total amount per user (last 1h)
   - Average transaction amount (last 1h)
   - Unique merchant count (last 1h)
-- [ ] **Location Features:**
+  - Unique locations count (last 1h)
+- [x] **Location Features:**
   - Distance from last transaction (haversine)
   - Speed between transactions (km/h) - impossible travel detection
   - Number of unique locations (last 1h)
-- [ ] **Transaction Features:**
-  - Amount deviation from user average
-  - Time since last transaction
-  - Is weekend / night transaction
-  - Foreign country flag
-- [ ] Write features to "features" topic and/or feature store (Delta Lake / Parquet)
+- [x] **Transaction Features:**
+  - Amount deviation from user average (z-score)
+  - Time since last transaction (dakika)
+  - Is weekend / night transaction (generator'dan)
+  - Foreign country flag (generator'dan)
+- [x] Write features to "features" topic + **Parquet** dosyaları (local `/data/features/`)
+  > Delta Lake değil düz Parquet: ACID/time-travel bu proje için overkill. İleride Delta Lake'e geçiş mümkün.
 
 ### Task 4.3: Real-Time Scoring
-- [ ] Load trained model in Spark
-- [ ] Score each transaction in real-time
-- [ ] Write fraud alerts to "fraud-alerts" topic
-- [ ] Latency monitoring (< 500ms target)
+- [x] Load trained model in Spark (FraudScorer + pandas_udf)
+- [x] Score each transaction in real-time (LightGBM predict_proba)
+- [x] Write fraud alerts to "fraud-alerts" topic (threshold >= 0.5)
+- [x] Preprocessing artifacts (scaler, label_encoders) kaydedildi → `data/artifacts/`
+- [ ] Latency monitoring (< 500ms target) → Phase 8 ile
 
 ---
 
 ## Phase 5: ML Model Training & MLflow
-**Status:** pending
+**Status:** complete
 
 ### Task 5.1: Historical Data Preparation
-- [ ] Generate labeled historical dataset (100K+ transactions)
-- [ ] Train/validation/test split (stratified for imbalanced data)
-- [ ] Feature preprocessing pipeline (scaling, encoding)
-- [ ] Handle class imbalance (SMOTE, class weights, undersampling)
+- [x] Generate labeled historical dataset (100K transactions)
+- [x] Train/validation/test split (stratified: 70/10/20, fraud oranı korundu)
+- [x] Feature preprocessing pipeline (StandardScaler + LabelEncoder)
+- [x] Handle class imbalance (class_weight="balanced" + scale_pos_weight=48.3)
 
 ### Task 5.2: Model Training with MLflow Tracking
-- [ ] Setup MLflow experiment
-- [ ] Train models:
-  - Logistic Regression (baseline)
-  - Random Forest
-  - XGBoost
-  - LightGBM
-- [ ] Log for each run:
+- [x] Setup MLflow experiment ("fraud-detection")
+- [x] Train models:
+  - Logistic Regression (baseline) → F1=0.935
+  - Random Forest → F1=0.995
+  - XGBoost → F1=0.990
+  - LightGBM → F1=0.993 ★ (AUC-PR en yüksek)
+- [x] Log for each run:
   - Hyperparameters
   - Metrics (precision, recall, F1, AUC-ROC, AUC-PR)
   - Confusion matrix
-  - Feature importance plot
+  - Feature importance (top 10)
   - Model artifact
-- [ ] Hyperparameter tuning (Optuna / GridSearch)
-- [ ] Compare models in MLflow UI
+- [x] Hyperparameter tuning (Optuna) → 20 trial, AUC-PR=0.9970
+- [x] Compare models in MLflow UI (http://localhost:5001)
 
 ### Task 5.3: MLflow Model Registry
-- [ ] Register best model in MLflow Model Registry
-- [ ] Set model stages: Staging → Production
-- [ ] Model versioning
-- [ ] Model signature and input example
+- [x] Register best model in MLflow Model Registry (fraud-detection-model v1)
+- [x] Set model stages: Production (v1)
+- [x] Model versioning (v1 = LightGBM)
+- [x] Model signature and input example (infer_signature + input_example)
 
 ---
 
@@ -184,14 +196,26 @@ Bu proje bir **öğrenme/portfolio projesidir**. Amaçlar:
 - [ ] DAG Steps:
   1. Validation set üzerinde mevcut modeli test et
   2. F1 < 0.85 VEYA scheduled gün ise → devam
-  3. Yeni veriyi feature store'dan çek (Parquet)
-  4. Model retrain (hyperparameter search dahil)
-  5. Yeni model > eski model ise → MLflow Registry promote
-  6. Vertex AI endpoint güncelle (yeni model version)
-  7. Sonuç raporu logla + Slack notification
+  3. **Data quality checks** (detay aşağıda)
+  4. Yeni veriyi feature store'dan çek (Parquet)
+  5. Model retrain (hyperparameter search dahil)
+  6. Yeni model > eski model ise → MLflow Registry promote
+  7. Vertex AI endpoint güncelle (yeni model version)
+  8. Sonuç raporu logla + Slack notification
 - [ ] Alerting on DAG failures (email/Slack)
-- [ ] Data quality checks before training
-- [ ] Rollback mekanizması (yeni model kötüyse eski modele dön)
+- [ ] **Data Quality Checks** (training öncesi):
+  - Null/missing value oranı < %5 kontrolü
+  - Fraud rate kontrolü (beklenen ~%2, sapma varsa alert)
+  - Schema uyumluluk kontrolü (feature sayısı, tipler)
+  - Outlier tespiti (amount > 3 std dev → flag, drop değil)
+  - Minimum veri miktarı kontrolü (< 1000 satırsa train etme)
+  - Class imbalance kontrolü (fraud sayısı < 10 ise skip)
+- [ ] **Rollback Mekanizması**:
+  - Yeni model deploy öncesi production model version'ı kaydet
+  - Deploy sonrası 1 saat A/B test (traffic %10 yeni model)
+  - Eğer yeni model F1 < eski model F1 * 0.95 → otomatik rollback
+  - MLflow'dan previous "Production" model tag'ini çek → Vertex AI'ya re-deploy
+  - Rollback durumunda Slack alert + DAG failure log
 
 ### Task 7.3: Monitoring DAG (Daily)
 - [ ] Her gün F1-score kontrolü (validation set üzerinde)

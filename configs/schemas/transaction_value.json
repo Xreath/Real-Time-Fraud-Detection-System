@@ -1,0 +1,87 @@
+{
+  "type": "object",
+  "title": "Transaction",
+  "description": "Kredi kartı işlem verisi şeması",
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "UUID formatında benzersiz işlem kimliği"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Kullanıcı kimliği (user_XXXX)"
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "İşlem tutarı (USD)"
+    },
+    "merchant_name": {
+      "type": "string",
+      "description": "İşyeri adı"
+    },
+    "merchant_category": {
+      "type": "string",
+      "description": "İşyeri kategorisi"
+    },
+    "card_type": {
+      "type": "string",
+      "enum": ["visa", "mastercard", "amex"],
+      "description": "Kart tipi"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Enlem"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Boylam"
+    },
+    "city": {
+      "type": "string",
+      "description": "Şehir"
+    },
+    "country": {
+      "type": "string",
+      "description": "Ülke kodu (US, CN, TR vb.)"
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "ISO 8601 formatında zaman damgası"
+    },
+    "is_weekend": {
+      "type": "boolean",
+      "description": "Hafta sonu mu?"
+    },
+    "is_night": {
+      "type": "boolean",
+      "description": "Gece işlemi mi? (23:00-05:00)"
+    },
+    "is_foreign": {
+      "type": "boolean",
+      "description": "Yabancı ülke işlemi mi?"
+    },
+    "is_fraud": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "Fraud etiketi: 0=normal, 1=fraud"
+    }
+  },
+  "required": [
+    "transaction_id",
+    "user_id",
+    "amount",
+    "merchant_name",
+    "merchant_category",
+    "card_type",
+    "latitude",
+    "longitude",
+    "city",
+    "country",
+    "timestamp",
+    "is_weekend",
+    "is_night",
+    "is_foreign",
+    "is_fraud"
+  ]
+}
