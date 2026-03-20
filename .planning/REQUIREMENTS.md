@@ -92,38 +92,38 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SERV-01 | Phase 1 | Pending |
-| SERV-02 | Phase 1 | Pending |
-| SERV-03 | Phase 1 | Pending |
-| SERV-04 | Phase 1 | Pending |
-| SERV-05 | Phase 1 | Pending |
-| AFLO-01 | Phase 2 | Pending |
-| AFLO-02 | Phase 2 | Pending |
-| AFLO-03 | Phase 2 | Pending |
-| AFLO-04 | Phase 2 | Pending |
-| RETR-01 | Phase 3 | Pending |
-| RETR-02 | Phase 3 | Pending |
-| RETR-03 | Phase 3 | Pending |
-| RETR-04 | Phase 3 | Pending |
-| RETR-05 | Phase 3 | Pending |
-| RETR-06 | Phase 3 | Pending |
-| CNRY-01 | Phase 4 | Pending |
-| CNRY-02 | Phase 4 | Pending |
-| CNRY-03 | Phase 4 | Pending |
-| CNRY-04 | Phase 4 | Pending |
-| MOND-01 | Phase 5 | Pending |
-| MOND-02 | Phase 5 | Pending |
-| MOND-03 | Phase 5 | Pending |
-| MOND-04 | Phase 5 | Pending |
-| MOND-05 | Phase 5 | Pending |
-| MOND-06 | Phase 5 | Pending |
-| OBSV-01 | Phase 6 | Pending |
-| OBSV-02 | Phase 6 | Pending |
-| OBSV-03 | Phase 6 | Pending |
-| OBSV-04 | Phase 6 | Pending |
-| OBSV-05 | Phase 6 | Pending |
-| OBSV-06 | Phase 6 | Pending |
-| OBSV-07 | Phase 6 | Pending |
+| SERV-01 | Phase 6 | Pending |
+| SERV-02 | Phase 6 | Pending |
+| SERV-03 | Phase 6 | Pending |
+| SERV-04 | Phase 6 | Pending |
+| SERV-05 | Phase 6 | Pending |
+| AFLO-01 | Phase 7 | Pending |
+| AFLO-02 | Phase 7 | Pending |
+| AFLO-03 | Phase 7 | Pending |
+| AFLO-04 | Phase 7 | Pending |
+| RETR-01 | Phase 7 | Pending |
+| RETR-02 | Phase 7 | Pending |
+| RETR-03 | Phase 7 | Pending |
+| RETR-04 | Phase 7 | Pending |
+| RETR-05 | Phase 7 | Pending |
+| RETR-06 | Phase 7 | Pending |
+| CNRY-01 | Phase 7 | Pending |
+| CNRY-02 | Phase 7 | Pending |
+| CNRY-03 | Phase 7 | Pending |
+| CNRY-04 | Phase 7 | Pending |
+| MOND-01 | Phase 8 | Pending |
+| MOND-02 | Phase 8 | Pending |
+| MOND-03 | Phase 8 | Pending |
+| MOND-04 | Phase 8 | Pending |
+| MOND-05 | Phase 8 | Pending |
+| MOND-06 | Phase 8 | Pending |
+| OBSV-01 | Phase 8 | Pending |
+| OBSV-02 | Phase 8 | Pending |
+| OBSV-03 | Phase 8 | Pending |
+| OBSV-04 | Phase 8 | Pending |
+| OBSV-05 | Phase 8 | Pending |
+| OBSV-06 | Phase 8 | Pending |
+| OBSV-07 | Phase 8 | Pending |
 
 **Coverage:**
 - v1 requirements: 32 total
@@ -132,4 +132,4 @@
 
 ---
 *Requirements defined: 2026-03-21*
-*Last updated: 2026-03-21 after initial definition*
+*Last updated: 2026-03-21 — traceability updated to Phase 6/7/8 numbering after roadmap creation*
