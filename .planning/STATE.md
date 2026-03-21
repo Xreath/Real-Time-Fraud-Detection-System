@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-03-21T22:46:42.330Z"
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-03-21T22:49:12.375Z"
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 06 (model-serving) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: 2 of 3
 
 *Updated after each plan completion*
 | Phase 06-model-serving P01 | 10 | 2 tasks | 2 files |
+| Phase 06-model-serving P02 | 5 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -59,6 +60,9 @@ Recent decisions affecting current work:
 - [Phase 6 prep]: Must wrap preprocessing artifacts (scaler.joblib, label_encoders.joblib) into mlflow.pyfunc custom model to avoid training-serving skew — do not use raw mlflow models serve against LightGBM flavor directly
 - [Phase 06-model-serving]: Used mlflow.pyfunc.PythonModel to bundle LightGBM + preprocessing artifacts, enabling zero-skew REST serving without src/ package dependency
 - [Phase 06-model-serving]: FRAUD_THRESHOLD env var with default 0.5 in load_context() for runtime override without redeployment
+- [Phase 06-model-serving]: Model URI uses @champion alias for zero-downtime model updates without redeploying containers
+- [Phase 06-model-serving]: --env-manager local --no-conda uses container pre-installed packages, no nested virtualenv
+- [Phase 06-model-serving]: fraud-api health check start_period: 60s with retries: 10 allows full model artifact download from MinIO
 
 ### Pending Todos
 
@@ -73,6 +77,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T22:46:42.328Z
-Stopped at: Completed 06-01-PLAN.md
+Last session: 2026-03-21T22:49:12.373Z
+Stopped at: Completed 06-02-PLAN.md
 Resume file: None

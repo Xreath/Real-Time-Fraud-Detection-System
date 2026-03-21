@@ -34,7 +34,7 @@ Phases 1-5 delivered the full data pipeline: Docker Compose infrastructure, synt
 **Plans:** 1/3 plans executed
 Plans:
 - [x] 06-01-PLAN.md — Create FraudPyfunc PythonModel class and register in MLflow with champion alias
-- [ ] 06-02-PLAN.md — Build Dockerfile.serving and add fraud-api service to Docker Compose
+- [x] 06-02-PLAN.md — Build Dockerfile.serving and add fraud-api service to Docker Compose
 - [ ] 06-03-PLAN.md — Test suite (unit + integration) and smoke test with human verification
 
 ### Phase 7: Orchestration
