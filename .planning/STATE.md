@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-03-21T22:46:42.330Z"
+progress:
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 1
+---
+
 # Project State
 
 ## Project Reference
@@ -5,20 +19,17 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Demonstrate a complete, production-realistic MLOps pipeline that can be discussed in depth during interviews
-**Current focus:** Phase 6 — Model Serving
+**Current focus:** Phase 06 — model-serving
 
 ## Current Position
 
-Phase: 6 of 8 (Model Serving)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-21 — Roadmap created; phases 1-5 marked complete, phases 6-8 defined
-
-Progress: [█████░░░░░░░░░░░] 5 of 8 phases complete (plans TBD)
+Phase: 06 (model-serving) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 0 (phases 1-5 pre-existed this workflow)
 - Average duration: -
 - Total execution time: -
@@ -30,10 +41,12 @@ Progress: [█████░░░░░░░░░░░] 5 of 8 phases compl
 | - | - | - | - |
 
 **Recent Trend:**
+
 - Last 5 plans: -
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 06-model-serving P01 | 10 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -44,6 +57,8 @@ Recent decisions affecting current work:
 
 - [Phase 5]: LightGBM champion model (Val AUC-PR=0.998, Test F1=0.982) promoted to MLflow Registry with @champion alias
 - [Phase 6 prep]: Must wrap preprocessing artifacts (scaler.joblib, label_encoders.joblib) into mlflow.pyfunc custom model to avoid training-serving skew — do not use raw mlflow models serve against LightGBM flavor directly
+- [Phase 06-model-serving]: Used mlflow.pyfunc.PythonModel to bundle LightGBM + preprocessing artifacts, enabling zero-skew REST serving without src/ package dependency
+- [Phase 06-model-serving]: FRAUD_THRESHOLD env var with default 0.5 in load_context() for runtime override without redeployment
 
 ### Pending Todos
 
@@ -58,6 +73,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21
-Stopped at: Roadmap created, STATE.md initialized — ready to plan Phase 6
+Last session: 2026-03-21T22:46:42.328Z
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None

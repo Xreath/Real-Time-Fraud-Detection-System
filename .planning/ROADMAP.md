@@ -31,9 +31,9 @@ Phases 1-5 delivered the full data pipeline: Docker Compose infrastructure, synt
   3. The same transaction sent to both `FraudScorer.score()` and the REST endpoint returns scores within 0.001 of each other (no training-serving skew)
   4. The serving container loads the model at `models:/fraud-detection-model@champion`, not an arbitrary latest version
   5. `docker compose up` starts the `fraud-api` service alongside all existing services without errors
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 Plans:
-- [ ] 06-01-PLAN.md — Create FraudPyfunc PythonModel class and register in MLflow with champion alias
+- [x] 06-01-PLAN.md — Create FraudPyfunc PythonModel class and register in MLflow with champion alias
 - [ ] 06-02-PLAN.md — Build Dockerfile.serving and add fraud-api service to Docker Compose
 - [ ] 06-03-PLAN.md — Test suite (unit + integration) and smoke test with human verification
 
@@ -73,6 +73,6 @@ Phases execute in numeric order: 6 → 7 → 8
 | 3. Kafka Streaming | - | Complete | 2026-03-21 |
 | 4. Spark Features | - | Complete | 2026-03-21 |
 | 5. ML Training | - | Complete | 2026-03-21 |
-| 6. Model Serving | 0/3 | Planning complete | - |
+| 6. Model Serving | 1/3 | In Progress|  |
 | 7. Orchestration | 0/TBD | Not started | - |
 | 8. Observability | 0/TBD | Not started | - |
