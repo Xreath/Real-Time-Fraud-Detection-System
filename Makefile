@@ -6,7 +6,7 @@
 
 .PHONY: help up down restart logs status kafka-topics \
         venv install producer spark-submit mlflow-ui clean \
-        register-schemas prepare-data train stream
+        register-schemas prepare-data train stream register-pyfunc
 
 # Varsayılan: help
 help:
@@ -32,6 +32,7 @@ help:
 	@echo ""
 	@echo "  Application:"
 	@echo "    make producer        - Transaction producer başlat"
+	@echo "    make register-pyfunc - Pyfunc modeli MLflow'a kaydet"
 	@echo ""
 	@echo "  Cleanup:"
 	@echo "    make clean           - Docker volume ve cache temizle"
@@ -95,6 +96,9 @@ prepare-data:
 
 train:
 	. .venv/bin/activate && python -m src.training.train_model
+
+register-pyfunc:
+	. .venv/bin/activate && python -m src.serving.register_pyfunc
 
 # --- Cleanup ---
 clean:
