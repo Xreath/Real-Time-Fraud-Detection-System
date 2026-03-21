@@ -15,7 +15,7 @@ Phases 1-5 delivered the full data pipeline: Docker Compose infrastructure, synt
 - [x] **Phase 3: Kafka Streaming** - Schema Registry, partitioned topics, DLQ, retention policies
 - [x] **Phase 4: Spark Features** - Structured Streaming with windowed, location, and transaction features
 - [x] **Phase 5: ML Training** - LightGBM champion (AUC-PR=0.998), MLflow Registry, SHAP artifacts
-- [ ] **Phase 6: Model Serving** - MLflow pyfunc REST endpoint with preprocessing bundled; health check
+- [x] **Phase 6: Model Serving** - MLflow pyfunc REST endpoint with preprocessing bundled; health check (completed 2026-03-21)
 - [ ] **Phase 7: Orchestration** - Airflow with retraining DAG, monitoring DAG trigger, canary deploy
 - [ ] **Phase 8: Observability** - Prometheus + Grafana dashboards, alerting, drift detection
 
@@ -31,11 +31,11 @@ Phases 1-5 delivered the full data pipeline: Docker Compose infrastructure, synt
   3. The same transaction sent to both `FraudScorer.score()` and the REST endpoint returns scores within 0.001 of each other (no training-serving skew)
   4. The serving container loads the model at `models:/fraud-detection-model@champion`, not an arbitrary latest version
   5. `docker compose up` starts the `fraud-api` service alongside all existing services without errors
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [x] 06-01-PLAN.md — Create FraudPyfunc PythonModel class and register in MLflow with champion alias
 - [x] 06-02-PLAN.md — Build Dockerfile.serving and add fraud-api service to Docker Compose
-- [ ] 06-03-PLAN.md — Test suite (unit + integration) and smoke test with human verification
+- [x] 06-03-PLAN.md — Test suite (unit + integration) and smoke test with human verification
 
 ### Phase 7: Orchestration
 **Goal**: Airflow runs in Docker Compose with validated connectivity to all services, executes a weekly retraining DAG with data quality gates and champion comparison, triggers retraining on F1 degradation, and deploys new models via canary with automatic rollback
@@ -73,6 +73,6 @@ Phases execute in numeric order: 6 → 7 → 8
 | 3. Kafka Streaming | - | Complete | 2026-03-21 |
 | 4. Spark Features | - | Complete | 2026-03-21 |
 | 5. ML Training | - | Complete | 2026-03-21 |
-| 6. Model Serving | 1/3 | In Progress|  |
+| 6. Model Serving | 3/3 | Complete   | 2026-03-21 |
 | 7. Orchestration | 0/TBD | Not started | - |
 | 8. Observability | 0/TBD | Not started | - |
