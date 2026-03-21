@@ -7,11 +7,11 @@
 
 ### Model Serving
 
-- [ ] **SERV-01**: Model is served via MLflow REST endpoint at `/invocations` accepting JSON transaction payloads
-- [ ] **SERV-02**: Health check endpoint at `/health` returns 200 when model is loaded and ready
-- [ ] **SERV-03**: Serving uses same preprocessing artifacts (scaler, label encoders) as training — no training-serving skew
-- [ ] **SERV-04**: Serving loads a specific model version from MLflow Registry (champion alias), not "latest"
-- [ ] **SERV-05**: MLflow serve runs as a Docker Compose service with configurable workers
+- [x] **SERV-01**: Model is served via MLflow REST endpoint at `/invocations` accepting JSON transaction payloads
+- [x] **SERV-02**: Health check endpoint at `/health` returns 200 when model is loaded and ready
+- [x] **SERV-03**: Serving uses same preprocessing artifacts (scaler, label encoders) as training — no training-serving skew
+- [x] **SERV-04**: Serving loads a specific model version from MLflow Registry (champion alias), not "latest"
+- [x] **SERV-05**: MLflow serve runs as a Docker Compose service with configurable workers
 
 ### Airflow Setup
 
@@ -92,11 +92,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SERV-01 | Phase 6 | Pending |
-| SERV-02 | Phase 6 | Pending |
-| SERV-03 | Phase 6 | Pending |
-| SERV-04 | Phase 6 | Pending |
-| SERV-05 | Phase 6 | Pending |
+| SERV-01 | Phase 6 | Complete |
+| SERV-02 | Phase 6 | Complete |
+| SERV-03 | Phase 6 | Complete |
+| SERV-04 | Phase 6 | Complete |
+| SERV-05 | Phase 6 | Complete |
 | AFLO-01 | Phase 7 | Pending |
 | AFLO-02 | Phase 7 | Pending |
 | AFLO-03 | Phase 7 | Pending |
