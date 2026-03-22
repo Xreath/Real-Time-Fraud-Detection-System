@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-03-PLAN.md
-last_updated: "2026-03-22T10:29:44.256Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-03-22T11:44:44.431Z"
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 7
+  completed_plans: 5
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Demonstrate a complete, production-realistic MLOps pipeline that can be discussed in depth during interviews
-**Current focus:** Phase 06 — model-serving
+**Current focus:** Phase 07 — orchestration
 
 ## Current Position
 
-Phase: 7
-Plan: Not started
+Phase: 07 (orchestration) — EXECUTING
+Plan: 3 of 4
 
 ## Performance Metrics
 
@@ -50,6 +50,8 @@ Plan: Not started
 | Phase 06-model-serving P02 | 5 | 2 tasks | 3 files |
 | Phase 06-model-serving P03 | 12 | 2 tasks | 5 files |
 | Phase 06-model-serving P03 | 12 | 3 tasks | 5 files |
+| Phase 07-orchestration P01 | 2 | 2 tasks | 4 files |
+| Phase 07 P02 | 113s | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -68,6 +70,9 @@ Recent decisions affecting current work:
 - [Phase 06-model-serving]: pytest installed via uv; unit tests use real artifacts with mocked model for deterministic offline testing; integration tests self-skip when fraud-api not running
 - [Phase 06-model-serving]: pytest installed via uv; unit tests use real artifacts with mocked model for deterministic offline testing; integration tests self-skip when fraud-api not running
 - [Phase 06-model-serving]: Smoke test script uses python3 -c for JSON parsing inline — no extra dependencies needed (no jq required)
+- [Phase 07-orchestration]: Airflow 2.9.3 with constraints-3.11.txt prevents SQLAlchemy version conflicts with MLflow 2.12.x; separate postgres-airflow on port 5433; YAML anchors for DRY config
+- [Phase 07]: Dual-channel alerting: Airflow task logs + structured JSON files in alerts/ directory per D-13, D-14 — persistence and visibility without external dependencies
+- [Phase 07]: compare_models uses F1 threshold=0.95 per CNRY-02 — challenger must achieve 95% of champion F1 to be promoted; logs precision/recall/auc_pr for all comparisons per D-08
 
 ### Pending Todos
 
@@ -82,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T10:10:06.717Z
-Stopped at: Completed 06-03-PLAN.md
+Last session: 2026-03-22T11:44:44.429Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None

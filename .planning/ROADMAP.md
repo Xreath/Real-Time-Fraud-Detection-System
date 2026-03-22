@@ -49,8 +49,8 @@ Plans:
   5. A new model is deployed via simulated canary (batch validation against champion), and automatically rolls back with an alert if its F1 drops below 95% of champion F1
 **Plans:** 4 plans
 Plans:
-- [ ] 07-01-PLAN.md — Airflow Docker Compose infrastructure with separate PostgreSQL and Docker socket
-- [ ] 07-02-PLAN.md — Shared DAG utilities: alerting, data quality checks, MLflow helpers
+- [x] 07-01-PLAN.md — Airflow Docker Compose infrastructure with separate PostgreSQL and Docker socket
+- [x] 07-02-PLAN.md — Shared DAG utilities: alerting, data quality checks, MLflow helpers
 - [ ] 07-03-PLAN.md — Retraining DAG with canary evaluation, promotion, and fraud-api restart
 - [ ] 07-04-PLAN.md — Unit tests for DAG utilities and human verification of Airflow UI
 
