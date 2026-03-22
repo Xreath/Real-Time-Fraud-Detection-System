@@ -211,7 +211,7 @@ services:
       --backend-store-uri postgresql://${POSTGRES_USER:-mlflow}:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/${POSTGRES_DB:-mlflow}
       --default-artifact-root s3://mlflow-artifacts/
     healthcheck:
-      test: curl -f http://localhost:5000/health || exit 1
+      test: python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')" || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
@@ -246,7 +246,7 @@ services:
       --env-manager local
       --no-conda
     healthcheck:
-      test: curl -f http://localhost:5002/health || exit 1
+      test: python -c "import urllib.request; urllib.request.urlopen('http://localhost:5002/health')" || exit 1
       interval: 15s
       timeout: 10s
       retries: 10

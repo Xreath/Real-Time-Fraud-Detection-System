@@ -1,11 +1,21 @@
 # MLflow Model Serving - Fraud Detection
 # LightGBM champion model + preprocessing artifacts via pyfunc
-FROM ghcr.io/mlflow/mlflow:v2.12.2
+#
+# Python 3.12 base — must match the Python version that registered the pyfunc model.
+# cloudpickle serialization is NOT cross-version compatible; if the pyfunc was
+# pickled with Python 3.12 (local dev), the serving container must also be 3.12.
+FROM python:3.12-slim
+
+# libgomp required by LightGBM (OpenMP runtime)
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir \
+    setuptools \
+    mlflow>=2.12.2 \
     psycopg2-binary \
     boto3 \
     lightgbm>=4.0.0 \
     scikit-learn>=1.4.0 \
     pandas>=2.2.0 \
-    numpy>=1.26.0
+    numpy>=1.26.0 \
+    gunicorn
