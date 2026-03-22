@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed 06-03-PLAN.md (checkpoint:human-verify at Task 3)"
-last_updated: "2026-03-21T22:53:34.314Z"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-03-22T10:10:06.719Z"
 progress:
   total_phases: 3
   completed_phases: 1
@@ -49,6 +49,7 @@ Plan: 3 of 3
 | Phase 06-model-serving P01 | 10 | 2 tasks | 2 files |
 | Phase 06-model-serving P02 | 5 | 2 tasks | 3 files |
 | Phase 06-model-serving P03 | 12 | 2 tasks | 5 files |
+| Phase 06-model-serving P03 | 12 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - [Phase 06-model-serving]: --env-manager local --no-conda uses container pre-installed packages, no nested virtualenv
 - [Phase 06-model-serving]: fraud-api health check start_period: 60s with retries: 10 allows full model artifact download from MinIO
 - [Phase 06-model-serving]: pytest installed via uv; unit tests use real artifacts with mocked model for deterministic offline testing; integration tests self-skip when fraud-api not running
+- [Phase 06-model-serving]: pytest installed via uv; unit tests use real artifacts with mocked model for deterministic offline testing; integration tests self-skip when fraud-api not running
+- [Phase 06-model-serving]: Smoke test script uses python3 -c for JSON parsing inline — no extra dependencies needed (no jq required)
 
 ### Pending Todos
 
@@ -79,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T22:53:34.312Z
-Stopped at: Completed 06-03-PLAN.md (checkpoint:human-verify at Task 3)
+Last session: 2026-03-22T10:10:06.717Z
+Stopped at: Completed 06-03-PLAN.md
 Resume file: None
