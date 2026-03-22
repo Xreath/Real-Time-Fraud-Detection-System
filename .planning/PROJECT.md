@@ -25,7 +25,7 @@ Demonstrate a complete, production-realistic MLOps pipeline that can be discusse
 
 ### Active
 
-- [ ] Local model serving via MLflow serve with REST API
+- ✓ Local model serving via MLflow serve with REST API — Validated in Phase 06: model-serving
 - [ ] Load testing of local prediction endpoint
 - [ ] GCP Vertex AI deployment with auto-scaling (stretch goal)
 - [ ] A/B testing via Vertex AI traffic splitting (stretch goal)
@@ -50,8 +50,8 @@ Demonstrate a complete, production-realistic MLOps pipeline that can be discusse
 
 - **Project type**: Learning/portfolio project for job interviews
 - **Language**: Turkish comments and documentation alongside English code
-- **Phases 1-5 complete**: Infrastructure, data generation, Kafka streaming, Spark features, ML training
-- **Phases 6-8 remaining**: Deployment, Airflow orchestration, monitoring
+- **Phases 1-6 complete**: Infrastructure, data generation, Kafka streaming, Spark features, ML training, model serving
+- **Phases 7-8 remaining**: Airflow orchestration, monitoring
 - **Tech decisions documented**: Findings.md captures every tradeoff with interview-ready explanations
 - **Known issues resolved**: PySpark version compatibility, MLflow client/server version mismatch, Docker networking, Zookeeper healthchecks
 - **Model performance**: LightGBM best performer (Val AUC-PR=0.998, Test F1=0.982)
@@ -94,4 +94,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-21 after initialization*
+*Last updated: 2026-03-22 after Phase 06 completion*
