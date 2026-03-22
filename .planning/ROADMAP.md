@@ -42,12 +42,17 @@ Plans:
 **Depends on**: Phase 6 (stable mlflow-serve container for DAG-triggered restarts)
 **Requirements**: AFLO-01, AFLO-02, AFLO-03, AFLO-04, RETR-01, RETR-02, RETR-03, RETR-04, RETR-05, RETR-06, CNRY-01, CNRY-02, CNRY-03, CNRY-04
 **Success Criteria** (what must be TRUE):
-  1. The Airflow webserver UI is accessible at `http://localhost:8080` and shows the retraining and monitoring DAGs
+  1. The Airflow webserver UI is accessible at `http://localhost:8081` and shows the retraining DAG
   2. The retraining DAG runs on Sunday 02:00 schedule and can be manually triggered; failed runs send an alert via on_failure_callback
   3. Data quality checks block retraining when null rate exceeds 5%, fraud rate is outside tolerance, schema mismatches, fewer than 1000 rows, or fewer than 10 fraud cases
   4. After a successful retraining run, the new model is promoted to champion in MLflow Registry only if its validation F1 exceeds the current champion's F1
-  5. A new model is deployed to 10% of traffic for 1 hour before full promotion, and automatically rolls back with an alert if its F1 drops below 95% of champion F1
-**Plans**: TBD
+  5. A new model is deployed via simulated canary (batch validation against champion), and automatically rolls back with an alert if its F1 drops below 95% of champion F1
+**Plans:** 4 plans
+Plans:
+- [ ] 07-01-PLAN.md — Airflow Docker Compose infrastructure with separate PostgreSQL and Docker socket
+- [ ] 07-02-PLAN.md — Shared DAG utilities: alerting, data quality checks, MLflow helpers
+- [ ] 07-03-PLAN.md — Retraining DAG with canary evaluation, promotion, and fraud-api restart
+- [ ] 07-04-PLAN.md — Unit tests for DAG utilities and human verification of Airflow UI
 
 ### Phase 8: Observability
 **Goal**: Prometheus scrapes metrics from all services, Grafana displays a live dashboard with throughput, fraud rate, model latency, and Kafka lag, alerting fires on F1 degradation and high fraud rate, and the monitoring DAG runs daily drift and anomaly checks
@@ -74,5 +79,5 @@ Phases execute in numeric order: 6 → 7 → 8
 | 4. Spark Features | - | Complete | 2026-03-21 |
 | 5. ML Training | - | Complete | 2026-03-21 |
 | 6. Model Serving | 3/3 | Complete   | 2026-03-22 |
-| 7. Orchestration | 0/TBD | Not started | - |
+| 7. Orchestration | 0/4 | In progress | - |
 | 8. Observability | 0/TBD | Not started | - |
