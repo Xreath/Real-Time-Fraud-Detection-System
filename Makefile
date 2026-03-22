@@ -6,7 +6,8 @@
 
 .PHONY: help up down restart logs status kafka-topics \
         venv install producer spark-submit mlflow-ui clean \
-        register-schemas prepare-data train stream register-pyfunc
+        register-schemas prepare-data train stream register-pyfunc \
+        airflow-up airflow-down airflow-logs airflow-dags
 
 # Varsayılan: help
 help:
@@ -99,6 +100,24 @@ train:
 
 register-pyfunc:
 	. .venv/bin/activate && python -m src.serving.register_pyfunc
+
+# --- Airflow ---
+airflow-up:
+	docker compose up -d postgres-airflow airflow-init
+	@echo "Waiting for airflow-init to complete..."
+	docker compose wait airflow-init 2>/dev/null || sleep 15
+	docker compose up -d airflow-webserver airflow-scheduler
+	@echo "Airflow starting at http://localhost:$${AIRFLOW_WEBSERVER_PORT:-8081}"
+
+airflow-down:
+	docker compose stop airflow-scheduler airflow-webserver
+	docker compose rm -f airflow-scheduler airflow-webserver airflow-init
+
+airflow-logs:
+	docker compose logs -f airflow-webserver airflow-scheduler --tail=50
+
+airflow-dags:
+	docker compose exec airflow-webserver airflow dags list
 
 # --- Cleanup ---
 clean:
