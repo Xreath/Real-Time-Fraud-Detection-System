@@ -1,0 +1,22 @@
+FROM apache/airflow:2.9.3-python3.11
+
+# Install additional packages required by DAGs using Airflow constraints
+# to avoid SQLAlchemy version conflicts with Airflow's pinned dependencies
+RUN pip install --no-cache-dir \
+    --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.9.3/constraints-3.11.txt" \
+    docker \
+    mlflow==2.12.2 \
+    pandas \
+    numpy \
+    scikit-learn \
+    lightgbm \
+    xgboost \
+    optuna \
+    imbalanced-learn \
+    joblib \
+    boto3 \
+    pyspark==3.5.0 \
+    requests \
+    Faker
+
+USER airflow
