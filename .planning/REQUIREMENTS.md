@@ -15,19 +15,19 @@
 
 ### Airflow Setup
 
-- [ ] **AFLO-01**: Airflow webserver and scheduler run in Docker Compose with LocalExecutor
-- [ ] **AFLO-02**: Airflow has configured connections to Kafka, Spark, MLflow, and PostgreSQL
-- [ ] **AFLO-03**: Airflow uses a separate PostgreSQL database for metadata (not shared with MLflow)
-- [ ] **AFLO-04**: DAG files are mounted from `airflow/dags/` directory into the Airflow container
+- [x] **AFLO-01**: Airflow webserver and scheduler run in Docker Compose with LocalExecutor
+- [x] **AFLO-02**: Airflow has configured connections to Kafka, Spark, MLflow, and PostgreSQL
+- [x] **AFLO-03**: Airflow uses a separate PostgreSQL database for metadata (not shared with MLflow)
+- [x] **AFLO-04**: DAG files are mounted from `airflow/dags/` directory into the Airflow container
 
 ### Retraining Pipeline
 
 - [ ] **RETR-01**: Retraining DAG runs on weekly schedule (Sunday 02:00)
 - [ ] **RETR-02**: Retraining is triggered immediately when daily F1 check finds F1 < 0.85
-- [ ] **RETR-03**: Data quality checks run before training: null rate < 5%, fraud rate ~2% ± tolerance, schema match, min 1000 rows, min 10 fraud cases
+- [x] **RETR-03**: Data quality checks run before training: null rate < 5%, fraud rate ~2% ± tolerance, schema match, min 1000 rows, min 10 fraud cases
 - [ ] **RETR-04**: New model is compared against champion on held-out validation set before promotion
 - [ ] **RETR-05**: Model is promoted to champion alias in MLflow Registry only if it outperforms current champion
-- [ ] **RETR-06**: DAG failure triggers email/log alert via Airflow on_failure_callback
+- [x] **RETR-06**: DAG failure triggers email/log alert via Airflow on_failure_callback
 
 ### Canary Deploy & Rollback
 
@@ -97,16 +97,16 @@
 | SERV-03 | Phase 6 | Complete |
 | SERV-04 | Phase 6 | Complete |
 | SERV-05 | Phase 6 | Complete |
-| AFLO-01 | Phase 7 | Pending |
-| AFLO-02 | Phase 7 | Pending |
-| AFLO-03 | Phase 7 | Pending |
-| AFLO-04 | Phase 7 | Pending |
+| AFLO-01 | Phase 7 | Complete |
+| AFLO-02 | Phase 7 | Complete |
+| AFLO-03 | Phase 7 | Complete |
+| AFLO-04 | Phase 7 | Complete |
 | RETR-01 | Phase 7 | Pending |
 | RETR-02 | Phase 7 | Pending |
-| RETR-03 | Phase 7 | Pending |
+| RETR-03 | Phase 7 | Complete |
 | RETR-04 | Phase 7 | Pending |
 | RETR-05 | Phase 7 | Pending |
-| RETR-06 | Phase 7 | Pending |
+| RETR-06 | Phase 7 | Complete |
 | CNRY-01 | Phase 7 | Pending |
 | CNRY-02 | Phase 7 | Pending |
 | CNRY-03 | Phase 7 | Pending |
