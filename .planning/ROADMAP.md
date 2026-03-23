@@ -16,7 +16,7 @@ Phases 1-5 delivered the full data pipeline: Docker Compose infrastructure, synt
 - [x] **Phase 4: Spark Features** - Structured Streaming with windowed, location, and transaction features
 - [x] **Phase 5: ML Training** - LightGBM champion (AUC-PR=0.998), MLflow Registry, SHAP artifacts
 - [x] **Phase 6: Model Serving** - MLflow pyfunc REST endpoint with preprocessing bundled; health check (completed 2026-03-21)
-- [ ] **Phase 7: Orchestration** - Airflow with retraining DAG, monitoring DAG trigger, canary deploy
+- [x] **Phase 7: Orchestration** - Airflow with retraining DAG, monitoring DAG trigger, canary deploy (completed 2026-03-23)
 - [ ] **Phase 8: Observability** - Prometheus + Grafana dashboards, alerting, drift detection
 
 ## Phase Details
@@ -47,12 +47,12 @@ Plans:
   3. Data quality checks block retraining when null rate exceeds 5%, fraud rate is outside tolerance, schema mismatches, fewer than 1000 rows, or fewer than 10 fraud cases
   4. After a successful retraining run, the new model is promoted to champion in MLflow Registry only if its validation F1 exceeds the current champion's F1
   5. A new model is deployed via simulated canary (batch validation against champion), and automatically rolls back with an alert if its F1 drops below 95% of champion F1
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 Plans:
 - [x] 07-01-PLAN.md — Airflow Docker Compose infrastructure with separate PostgreSQL and Docker socket
 - [x] 07-02-PLAN.md — Shared DAG utilities: alerting, data quality checks, MLflow helpers
 - [x] 07-03-PLAN.md — Retraining DAG with canary evaluation, promotion, and fraud-api restart
-- [ ] 07-04-PLAN.md — Unit tests for DAG utilities and human verification of Airflow UI
+- [x] 07-04-PLAN.md — Unit tests for DAG utilities and human verification of Airflow UI
 
 ### Phase 8: Observability
 **Goal**: Prometheus scrapes metrics from all services, Grafana displays a live dashboard with throughput, fraud rate, model latency, and Kafka lag, alerting fires on F1 degradation and high fraud rate, and the monitoring DAG runs daily drift and anomaly checks
@@ -79,5 +79,5 @@ Phases execute in numeric order: 6 → 7 → 8
 | 4. Spark Features | - | Complete | 2026-03-21 |
 | 5. ML Training | - | Complete | 2026-03-21 |
 | 6. Model Serving | 3/3 | Complete   | 2026-03-22 |
-| 7. Orchestration | 3/4 | In Progress|  |
+| 7. Orchestration | 4/4 | Complete   | 2026-03-23 |
 | 8. Observability | 0/TBD | Not started | - |
